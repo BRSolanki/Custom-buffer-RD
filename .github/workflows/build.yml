@@ -1,0 +1,112 @@
+name: build
+
+on:
+  workflow_dispatch:
+    inputs:
+      subversion:
+        description: 'Sub-version (eg: 46)'
+        required: true
+        type: string
+      platform:
+        description: 'Target platform to build for'
+        required: true
+        default: 'Multi-platform'
+        type: choice
+        options:
+        - Android
+        - Windows
+        - iOS
+        - Multi-platform
+        - All
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    if:  ${{ (github.event.inputs.platform == 'Windows') || (github.event.inputs.platform == 'All') }}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.14' 
+        cache: 'pip'
+    - uses: actions/cache@v6
+      with:
+        key: env-files-win-laz
+        path: |
+          ${{ github.workspace }}/tool/data
+    - run: pip install -r requirements.txt
+    - run: |
+        .\build.bat setup
+        .\build.bat pack -p windows -v ${{ inputs.subversion }} --no-zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: newb-x-windows
+        path: ./build/pack-windows
+  android:
+    runs-on: ubuntu-latest
+    if:  ${{ (github.event.inputs.platform == 'Android') || (github.event.inputs.platform == 'All') }}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.14' 
+        cache: 'pip'
+    - uses: actions/cache@v6
+      with:
+        key: env-files-linux-laz
+        path: |
+          ${{ github.workspace }}/tool/data
+    - run: pip install -r requirements.txt
+    - run: |
+        ./build.sh setup
+        ./build.sh pack -p android -v ${{ inputs.subversion }} --no-zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: newb-x-android
+        path: ./build/pack-android
+  ios:
+    runs-on: ubuntu-latest
+    if:  ${{ (github.event.inputs.platform == 'iOS') || (github.event.inputs.platform == 'All') }}
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.14' 
+        cache: 'pip'
+    - uses: actions/cache@v6
+      with:
+        key: env-files-linux-laz
+        path: |
+          ${{ github.workspace }}/tool/data
+    - run: pip install -r requirements.txt
+    - run: |
+        ./build.sh setup
+        ./build.sh pack -p ios -v ${{ inputs.subversion }} --no-zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: newb-x-ios
+        path: ./build/pack-ios
+  multiplatform:
+    runs-on: windows-2022
+    if:  ${{ (github.event.inputs.platform == 'Multi-platform') || (github.event.inputs.platform == 'All')}}
+    steps:
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
+      with:
+        python-version: '3.14' 
+        cache: 'pip'
+    - uses: actions/cache@v6
+      with:
+        key: env-files-win-laz
+        path: |
+          ${{ github.workspace }}/tool/data
+    - run: pip install -r requirements.txt
+    - run: |
+        .\build.bat setup
+        .\build.bat pack -p multiplatform -v ${{ inputs.subversion }} --no-zip
+    - uses: actions/upload-artifact@v4
+      with:
+        name: newb-x-multiplatform
+        path: ./build/pack-multiplatform

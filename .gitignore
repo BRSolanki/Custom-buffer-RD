@@ -1,0 +1,59 @@
+# ==========================================
+# Build Artifacts & Packages
+# ==========================================
+build/
+*.mcpack
+*.zip
+*.tar.gz
+
+# ==========================================
+# Build Tool Data & Cache
+# ==========================================
+tool/data/
+tool/lib/
+*.pkl
+*.bin
+
+# ==========================================
+# Python Cache & Environments
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+venv/
+ENV/
+.pytest_cache/
+
+# ==========================================
+# IDE & Editor Specific Files
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.clangd/
+
+# ==========================================
+# Operating System Files
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Local Scratch / Reference Archives & Dirs
+# ==========================================
+CustomBuffers-src/
+CustomBuffers-src.zip
+mcbe-shader-codebase/
+mcbe-shader-codebase-release-obfuscated.zip
+newb-x-mcbe/
+newb-x-mcbe-main.zip
+
+# Root duplicate workflow copies (already in .github/workflows/)
+/build.yml
+/build-check.yml
